@@ -1,10 +1,26 @@
 # About
 
+[![CI](https://github.com/innotelinc/AnyPS5/actions/workflows/ci.yml/badge.svg)](https://github.com/innotelinc/AnyPS5/actions/workflows/ci.yml)
+[![License: GPL-2.0](https://img.shields.io/badge/license-GPL--2.0-blue.svg)](LICENSE)
+
+
 Tool for automatic executables porting to Linux and Windows.
 
 Includes a [relinker](core/relinker) that converts executable to the target system's native format and implementations of [system prx libraries](core/libs/prx) suitable for dynamic linking. No emulation or separate runtime process.
 
 [Usage](docs/user/USAGE.md), [Build instructions](docs/dev/BUILD.md), [Architecture](docs/dev/ARCHITECTURE.md), [Technical debt of the project](docs/dev/TechnicalDebt.md), [code style conventions](docs/dev/CONVENTIONS.md), [contributing](CONTRIBUTING.md)
+
+## Why AnyPS5
+
+| Problem | Answer |
+| --- | --- |
+| An emulator is a second operating system to maintain. | The relinker produces a native executable and native libraries. |
+| A port needs the interfaces the binary expects. | The PRX library set supplies them at link time. |
+| The work is hard to repeat. | The build and the relink steps are documented and scripted. |
+
+Its place in the stack is [docs/stack.md](docs/stack.md); the canonical
+definition of the shared layers is the
+[Innotel Platform Stack](https://github.com/innotelinc/innotel-platform-stack).
 
 ## Status
 

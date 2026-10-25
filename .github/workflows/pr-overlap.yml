@@ -29,7 +29,13 @@ jobs:
           out=$RUNNER_TEMP/overlap
           python3 tools/pr_overlap.py --base "${{ github.event.repository.default_branch }}" --out "$out"
           marker='<!-- pr-overlap -->'
-          for file in "$out"/*.md; do
+          # No open pull requests means the tool writes no reports; without
+          # nullglob the loop still runs once with a literal '*.md' and the
+          # comments lookup 404s on a pull request that does not exist.
+          shopt -s nullglob
+          files=("$out"/*.md)
+          [ ${#files[@]} -gt 0 ] || { echo "no open pull requests to compare"; exit 0; }
+          for file in "${files[@]}"; do
             pr=$(basename "$file" .md)
             comment=$(gh api "repos/$GH_REPO/issues/$pr/comments" --paginate \
               --jq ".[] | select(.user.login == \"github-actions[bot]\" and (.body | startswith(\"$marker\"))) | [.id, .body] | @json" | head -n1)

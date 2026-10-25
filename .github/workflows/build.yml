@@ -261,6 +261,18 @@ jobs:
           curl -sSfL -o "$RUNNER_TEMP/winlibs.zip" "https://github.com/brechtsanders/winlibs_mingw/releases/download/$WINLIBS_RELEASE/$WINLIBS_ZIP"
           7z x "$RUNNER_TEMP/winlibs.zip" -oC:/winlibs > /dev/null
       - run: echo 'C:\winlibs\mingw64\bin' >> "$GITHUB_PATH"
+      # CMake's file(DOWNLOAD) on Windows cannot verify GitHub's chain with the
+      # runner's roots, so fetch the FFmpeg prebuilt with curl (which can) into
+      # the path ffmpeg-core looks in before it tries the network itself.
+      - if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          ffmpeg_sha=$(git -C 3rdparty/ffmpeg-core rev-parse --short=12 HEAD)
+          mkdir -p build/externals
+          for name in ffmpeg-mingw-x64.zip ffmpeg-windows-x64.zip; do
+            curl -sSfL -o "build/externals/${ffmpeg_sha}-${name}" \
+              "https://github.com/KytyPS5/ext-ffmpeg-core/releases/download/${ffmpeg_sha}/${name}"
+          done
       - uses: hendrikmuhs/ccache-action@v1.2.24
         with:
           key: windows
